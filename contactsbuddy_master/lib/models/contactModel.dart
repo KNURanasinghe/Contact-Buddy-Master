@@ -5,7 +5,7 @@ class Contact {
   String? priority;
 
 
-  Contact({ this.title,  this.date,  this.priority, });
+  Contact({ this.title,  this.date,  this.priority, int? status, int? id, });
   Contact.withId({this.id, this.title, this.date, this.priority, });
 
   static const tblName = "task_table";

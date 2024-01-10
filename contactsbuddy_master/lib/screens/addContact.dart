@@ -1,48 +1,47 @@
-import 'package:contactsbuddy_master/models/contactModel.dart';
-import 'package:contactsbuddy_master/utilities/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../models/contactModel.dart';
+import '../utilities/dbHelper.dart';
+
 class AddContacts extends StatefulWidget {
-  final Function refreshList;
+  Function refreshList;
   final Contact? contact;
+  String task;
 
-  const AddContacts(
-      {super.key, required this.refreshList, 
-      this.contact, required task});
+  AddContacts(
+      {super.key, required this.task, required this.refreshList, this.contact});
 
-Contact? get task => null;
-
-  // AddTask({this.task, this.refreshList});
   @override
-  // ignore: library_private_types_in_public_api
   _AddTaskState createState() => _AddTaskState();
 }
 
 class _AddTaskState extends State<AddContacts> {
-  _AddTaskState({this.title, this.status, this.date, this.priority});
+  _AddTaskState({this.title, this.date, this.status, this.priority});
+
   final _formKey = GlobalKey<FormState>();
   String? title, priority;
-  int? status;
-  DateTime? date = DateTime.now();
+  late int? status;
+  DateTime? date;
   final TextEditingController _dateController = TextEditingController();
   final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
-  final List<String> priorities = ["Low", "Medium", "High"];
-  DatabaseHelper? _dbHelper;
+  final List<String> _priorities = ["Low", "Medium", "High"];
+  late DatabaseHelper _dbHelper;
 
   @override
   void initState() {
     _dbHelper = DatabaseHelper.instance;
 
-    if (widget.task != null) {
-      title = widget.task?.title ?? "";
-      date = widget.contact?.date ?? DateTime.now();
-      priority = widget.task?.priority ?? "";
-      status = widget.task?.status ?? 0;
-    }
-    status = 0;
-
-    _dateController.text = _dateFormat.format(date!);
+    // if (widget.task is Contact) {
+    //   title = widget.task;
+    //   date = widget.task as DateTime;
+    //   priority = widget.task;
+    //   status = widget.task as int;
+    //   status = 0;
+    // }
+    print("${widget.task}");
+    print("widget.tet") ;
+    // _dateController.text = _dateFormat.format(date!);
     super.initState();
   }
 
@@ -74,7 +73,8 @@ class _AddTaskState extends State<AddContacts> {
                 height: 20,
               ),
               Text(
-                widget.task == null ? "Add Task" : "Update Task",
+                // ignore: unnecessary_null_comparison
+                widget.task.isEmpty ? "Add Task" : "Update Task",
                 style: TextStyle(
                   fontSize: 30,
                   color: Theme.of(context).primaryColor,
@@ -99,9 +99,10 @@ class _AddTaskState extends State<AddContacts> {
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10))),
                           textInputAction: TextInputAction.next,
-                          validator: (val) =>
-                              (val!.isEmpty) ? "Please add a task" : null,
-                          onSaved: (val) => title = val,
+                          validator: (val) => (val.toString().isEmpty)
+                              ? "Please add a task"
+                              : null,
+                          onSaved: (val) => title = val.toString(),
                           initialValue: title,
                         ),
                       ),
@@ -135,7 +136,7 @@ class _AddTaskState extends State<AddContacts> {
                           iconSize: 25,
                           isDense: true,
                           dropdownColor: Colors.white,
-                          items: priorities
+                          items: _priorities
                               .map((String priority) => DropdownMenuItem(
                                   value: priority,
                                   child: Text(
@@ -148,7 +149,7 @@ class _AddTaskState extends State<AddContacts> {
                               const Icon(Icons.arrow_drop_down_circle_outlined),
                           validator: (val) =>
                               (val == null) ? "Please add a priority" : null,
-                          onSaved: (val) => priority = val,
+                          onSaved: (val) => priority = val.toString(),
                           decoration: InputDecoration(
                               labelText: "Priority",
                               labelStyle: const TextStyle(fontSize: 20),
@@ -156,7 +157,7 @@ class _AddTaskState extends State<AddContacts> {
                                   borderRadius: BorderRadius.circular(10))),
                           onChanged: (val) {
                             setState(() {
-                              priority = val;
+                              priority = val.toString();
                             });
                           },
                           value: priority,
@@ -175,7 +176,7 @@ class _AddTaskState extends State<AddContacts> {
                             borderRadius: BorderRadius.circular(10)),
                         child: IconButton(
                           icon: Icon(
-                            widget.task == null
+                            widget.task != null
                                 ? Icons.note_add_rounded
                                 : Icons.update,
                             size: 40,
@@ -220,33 +221,35 @@ class _AddTaskState extends State<AddContacts> {
   }
 
   _datePicker() async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: date ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2050),
-    );
+    final DateTime? sdate = await showDatePicker(
+        context: context,
+        initialDate: date ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2050));
 
-    if (pickedDate != null && pickedDate != date) {
+    if (sdate != null) {
       setState(() {
-        date = pickedDate;
+        date = sdate;
       });
+      _dateController.text = _dateFormat.format(date!);
     }
-    _dateController.text = _dateFormat.format(date!);
   }
 
   _addTask() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      
-      _AddTaskState task = _AddTaskState(
-          title: title, date: date, priority: priority, status: status);
-      if (widget.task == null) {
-        _dbHelper?.insertContact(task as Contact);
-      } else {
-        task = widget.task!.id as _AddTaskState ;
-        _dbHelper?.updateContact(task as Contact);
-      }
+      Contact task;
+      print("id");
+      task = Contact(
+        title: title,
+        date: date,
+        priority: priority,
+        status: status,
+        id: 5,
+      );
+      print("${task.id}");
+      _dbHelper.updateContact(task);
+
       widget.refreshList();
       print('status is $status');
 
@@ -255,10 +258,12 @@ class _AddTaskState extends State<AddContacts> {
   }
 
   _delete() {
-    if (widget.task != null) {
-      _dbHelper?.deleteContact(widget.task!.id!);
+    // Assuming widget.task is of type Contact
+    if (widget.task is Contact) {
+      print("delete clicked");
+      _dbHelper.deleteContact(widget.task as int);
+      widget.refreshList();
+      Navigator.pop(context);
     }
-    widget.refreshList();
-    Navigator.pop(context);
   }
 }

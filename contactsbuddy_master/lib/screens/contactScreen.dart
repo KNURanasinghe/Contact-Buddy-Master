@@ -1,9 +1,9 @@
-import 'package:contactsbuddy_master/screens/addContact.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../models/contactModel.dart';
 import '../utilities/dbHelper.dart';
+import 'addContact.dart';
 
 class MyContacts extends StatefulWidget {
   const MyContacts({super.key});
@@ -18,6 +18,7 @@ class _MyContactsState extends State<MyContacts> {
   late DatabaseHelper _dbHelper;
 
   String contactListSearch = "";
+  String todoListSearch = "";
 
   void _refreshTaskList() async {
     setState(() {
@@ -34,7 +35,6 @@ class _MyContactsState extends State<MyContacts> {
 
   @override
   Widget build(BuildContext context) {
-   String? todoListSearch;
     _refreshTaskList();
     return Scaffold(
         floatingActionButton: FloatingActionButton(
@@ -45,7 +45,7 @@ class _MyContactsState extends State<MyContacts> {
                 MaterialPageRoute(
                     builder: (_) => AddContacts(
                           refreshList: _refreshTaskList,
-                          task: todoListSearch,
+                          task:todoListSearch
                         )));
           },
           child: const Icon(Icons.add),
@@ -123,7 +123,7 @@ class _MyContactsState extends State<MyContacts> {
         );
   }
 
-  Widget _buildTask(task) {
+  Widget _buildTask( task) {
     String date = "";
 
     if (task?.date != null) {
@@ -182,7 +182,7 @@ class _MyContactsState extends State<MyContacts> {
                     )),
                 trailing: Checkbox(
                   onChanged: (val) {
-                    task?.status = val! ? 1 : 0;
+                    task.status = val! ? 1 : 0;
 
                     _dbHelper.updateContact(task);
                     _refreshTaskList();
