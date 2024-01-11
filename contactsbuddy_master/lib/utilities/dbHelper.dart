@@ -69,7 +69,7 @@ class DatabaseHelper {
   }
 
   // Fetching the contacts
-  Future<List<Contact>> fetchContacts(String contactName) async {
+  Future<List<Contact>> fetchContacts(String contactName ) async {
     Database? db = await this.db;
     final List<Map<String, dynamic>> contacts = await db!.rawQuery(
         "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '$contactName%'");

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         primaryColor: const Color(0XFF06BAD9),
         hintColor: const Color(0XFFFFFFFF),
         textTheme: GoogleFonts.poppinsTextTheme(),
-        scaffoldBackgroundColor: const Color(0XFF0A1123),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 26, 45, 89),
         pageTransitionsTheme: const PageTransitionsTheme(builders: {
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
         }),

@@ -96,10 +96,12 @@ class _MyContactsState extends State<MyContacts> {
                           onChanged: (value) {
                             setState(() {
                               todoListSearch = value;
+                              print(todoListSearch);
                             });
                           },
                           decoration: const InputDecoration(
-                              labelText: 'Search',
+                              labelText:
+                                  'Search', //TODO create search sql function search using title;
                               labelStyle: TextStyle(color: Colors.white),
                               prefixIcon:
                                   Icon(Icons.search, color: Color(0XFF06BAD9)),
@@ -198,16 +200,18 @@ class _MyContactsState extends State<MyContacts> {
                       ? Icon(
                           Icons.person,
                           color: task.priority == "Family"
-                              ? Colors.red
+                              ? const Color.fromARGB(255, 245, 45, 31)
                               : task.priority == "Office"
-                                  ? const Color.fromARGB(214, 1, 47, 83)
-                                  : const Color(0XFF0AA51A),
+                                  ? const Color.fromARGB(255, 4, 25, 119)
+                                  : const Color.fromARGB(255, 216, 227, 18),
                         )
                       : Icon(
                           Icons.check,
                           color: task.priority == "Family"
-                              ? Colors.red
-                              : const Color(0XFF0E1D35),
+                              ? const Color.fromARGB(255, 209, 31, 19)
+                              : task.priority == "Office"
+                                  ? const Color.fromARGB(255, 4, 25, 119)
+                                  : const Color.fromARGB(255, 252, 227, 2),
                         ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 5),
                 ),
