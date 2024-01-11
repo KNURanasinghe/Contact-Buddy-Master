@@ -26,8 +26,11 @@ class DatabaseHelper {
   Future<Database> _initDB() async {
     Directory dir = await getApplicationDocumentsDirectory();
     String dbPath = join(dir.path, _dbName);
-    return await openDatabase(dbPath,
-        version: _dbVersion, onCreate: _onCreateDb);
+    return await openDatabase(
+      dbPath,
+      version: _dbVersion,
+      onCreate: _onCreateDb,
+    );
   }
 
   // Creating table
@@ -54,12 +57,14 @@ class DatabaseHelper {
 
   // Inserting contacts
   Future<int> insertContact(Contact contact) async {
+    print("data inserted");
     Database? db = await this.db;
     return await db!.insert(Contact.tblName, contact.toMap());
   }
 
   // Fetching the contacts
   Future<List<Contact>> fetchContacts(String contactName) async {
+    print("data searched");
     Database? db = await this.db;
     final List<Map<String, dynamic>> contacts = await db!.rawQuery(
         "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '$contactName%'");
@@ -81,7 +86,7 @@ class DatabaseHelper {
 
   // Updating the contacts
   Future<int> updateContact(Contact contact) async {
-   
+    print("data updated");
     Database? db = await this.db;
     return await db!.update(Contact.tblName, contact.toMap(),
         where: '${Contact.colId} = ?', whereArgs: [contact.id]);
@@ -89,6 +94,7 @@ class DatabaseHelper {
 
   // Deleting the contacts
   Future<int> deleteContact(int id) async {
+    print("data deleted");
     Database? db = await this.db;
     return await db!.delete(Contact.tblName,
         where: '${Contact.colId} = ?', whereArgs: [id]);

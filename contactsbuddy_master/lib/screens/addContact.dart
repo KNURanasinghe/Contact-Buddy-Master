@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/contactModel.dart';
 import '../utilities/dbHelper.dart';
+
+DateTime now = DateTime.now();
 
 class AddContacts extends StatefulWidget {
   Function refreshList;
@@ -22,10 +25,9 @@ class _AddTaskState extends State<AddContacts> {
   String? title, priority;
   late int? status;
   int? date;
-
+  TextEditingController dateController = TextEditingController();
   final List<String> _priorities = ["Friends", "Office", "Family"];
   late DatabaseHelper _dbHelper;
-  int id = 0;
 
   @override
   void initState() {
@@ -102,7 +104,7 @@ class _AddTaskState extends State<AddContacts> {
                         child: TextFormField(
                           style: const TextStyle(color: Colors.blueGrey),
                           decoration: InputDecoration(
-                              labelText: "Date",
+                              labelText: "Date (DD/MM/YYYY)",
                               labelStyle: const TextStyle(fontSize: 20),
                               border: OutlineInputBorder(
                                   borderSide: const BorderSide(
@@ -110,8 +112,12 @@ class _AddTaskState extends State<AddContacts> {
                                   borderRadius: BorderRadius.circular(10))),
                           textInputAction: TextInputAction.next,
                           validator: (val) => (val.toString().isEmpty)
-                              ? "Please add a date"
+                              ? "Please add a date in the format DD/MM/YYYY"
                               : null,
+                          onSaved: (val) {
+                            // Convert date to milliseconds since epoch and store as int
+                            date = _convertDateToMilliseconds(val.toString());
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -208,6 +214,16 @@ class _AddTaskState extends State<AddContacts> {
     );
   }
 
+  int _convertDateToMilliseconds(String dateString) {
+    try {
+      DateTime parsedDate = DateFormat('dd/MM/yyyy').parseStrict(dateString);
+      return parsedDate.millisecondsSinceEpoch;
+    } catch (e) {
+      print("Error parsing date: $e");
+      return 0; // Handle error appropriately
+    }
+  }
+
   _addTask() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -219,8 +235,9 @@ class _AddTaskState extends State<AddContacts> {
         priority: priority,
         id: 1,
       );
-
-      _dbHelper.updateContact(task);
+      widget.task.isEmpty
+          ? _dbHelper.insertContact(task)
+          : _dbHelper.updateContact(task);
 
       widget.refreshList();
 

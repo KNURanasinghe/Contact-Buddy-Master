@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../models/contactModel.dart';
 import '../utilities/dbHelper.dart';
@@ -13,7 +12,6 @@ class MyContacts extends StatefulWidget {
 }
 
 class _MyContactsState extends State<MyContacts> {
-  final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
   late Future<List<Contact>> _contactList;
   late DatabaseHelper _dbHelper;
 
@@ -127,97 +125,101 @@ class _MyContactsState extends State<MyContacts> {
   Widget _buildTask(Contact task) {
     String date = "";
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(),
-      child: Material(
-        color: Colors.transparent,
-        elevation: 5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
-              decoration: BoxDecoration(
-                gradient: task.status == 0
-                    ? const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                            Color(0XFF70A9FF),
-                            Color(0XFF90BCFF),
-                          ])
-                    : const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                            Color(0XFFFFC026),
-                            Color(0XFFFFA21D),
-                          ]),
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                      color: const Color(0XFF515151).withOpacity(.25),
-                      blurRadius: 6,
-                      offset: const Offset(2, 5))
-                ],
-              ),
-              child: ListTile(
-                title: Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
-                  child: Text(
-                    task.title != null ? "${task.title}" : "Contact",
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(),
+        child: Material(
+          color: Colors.transparent,
+          elevation: 5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 10.0),
+                decoration: BoxDecoration(
+                  gradient: task.status == 0
+                      ? const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                              Color(0XFF70A9FF),
+                              Color(0XFF90BCFF),
+                            ])
+                      : const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                              Color(0XFFFFC026),
+                              Color(0XFFFFA21D),
+                            ]),
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                        color: const Color(0XFF515151).withOpacity(.25),
+                        blurRadius: 6,
+                        offset: const Offset(2, 5))
+                  ],
                 ),
-                subtitle: Text("$date . ${task.priority}",
-                    style: const TextStyle(
-                      fontSize: 15,
-                    )),
-                trailing: Checkbox(
-                  onChanged: (val) {
-                    task.status == val! ? 1 : 0;
-
-                    _dbHelper.updateContact(task);
-                    _refreshTaskList();
-                  },
-                  value: task.status == 1 ? true : false,
-                  activeColor: const Color(0XFF52001B),
-                ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AddContacts(
-                      task: task.title.toString(),
-                      refreshList: _refreshTaskList,
-                    ),
-                  ),
-                ),
-                leading: task.status == 0
-                    ? Icon(
-                        Icons.person_add_alt_sharp,
-                        color: task.priority == "Family"
-                            ? Colors.red
-                            : task.priority == "Office"
-                                ? const Color(0XFF0776CA)
-                                : const Color(0XFF0AA51A),
-                      )
-                    : Icon(
-                        Icons.check,
-                        color: task.priority == "Family"
-                            ? Colors.red
-                            : const Color(0XFF0E1D35),
+                child: ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: Text(
+                      task.title != null ? "${task.title}" : "Contact",
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
                       ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+                    ),
+                  ),
+                  subtitle: Text("$date . ${task.priority}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                      )),
+                  trailing: Checkbox(
+                    onChanged: (val) {
+                      setState(() {
+                        task.status = val! ? 1 : 0;
+                      });
+
+                      _dbHelper.updateContact(task);
+                      _refreshTaskList();
+                    },
+                    value: task.status == 1 ? true : false,
+                    activeColor: const Color(0XFF52001B),
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AddContacts(
+                        task: task.title.toString(),
+                        refreshList: _refreshTaskList,
+                      ),
+                    ),
+                  ),
+                  leading: task.status == 0
+                      ? Icon(
+                          Icons.person_add_alt_sharp,
+                          color: task.priority == "Family"
+                              ? Colors.red
+                              : task.priority == "Office"
+                                  ? const Color(0XFF0776CA)
+                                  : const Color(0XFF0AA51A),
+                        )
+                      : Icon(
+                          Icons.check,
+                          color: task.priority == "Family"
+                              ? Colors.red
+                              : const Color(0XFF0E1D35),
+                        ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
