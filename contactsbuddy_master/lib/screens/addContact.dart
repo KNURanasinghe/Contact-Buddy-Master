@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../models/contactModel.dart';
 import '../utilities/dbHelper.dart';
@@ -22,10 +21,9 @@ class _AddTaskState extends State<AddContacts> {
   final _formKey = GlobalKey<FormState>();
   String? title, priority;
   late int? status;
-  DateTime? date;
-  final TextEditingController _dateController = TextEditingController();
-  final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
-  final List<String> _priorities = ["Friends", "Medium", "High"];
+  int? date;
+
+  final List<String> _priorities = ["Friends", "Office", "Family"];
   late DatabaseHelper _dbHelper;
   int id = 0;
 
@@ -42,11 +40,6 @@ class _AddTaskState extends State<AddContacts> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _dateController.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,9 +109,9 @@ class _AddTaskState extends State<AddContacts> {
                                       color: Colors.pinkAccent),
                                   borderRadius: BorderRadius.circular(10))),
                           textInputAction: TextInputAction.next,
-                          onTap: _datePicker,
-                          controller: _dateController,
-                          readOnly: true,
+                          validator: (val) => (val.toString().isEmpty)
+                              ? "Please add a date"
+                              : null,
                         ),
                       ),
                       const SizedBox(
@@ -213,21 +206,6 @@ class _AddTaskState extends State<AddContacts> {
         ),
       ),
     );
-  }
-
-  _datePicker() async {
-    final DateTime? sdate = await showDatePicker(
-        context: context,
-        initialDate: date ?? DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2050));
-
-    if (sdate != null) {
-      setState(() {
-        date = sdate;
-      });
-      _dateController.text = _dateFormat.format(date!);
-    }
   }
 
   _addTask() {

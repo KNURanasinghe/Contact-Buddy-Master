@@ -1,7 +1,7 @@
 class Contact {
   int?id;
   String? title;
-  DateTime? date;
+  int? date;
   String? priority;
 
 
@@ -21,7 +21,7 @@ class Contact {
     var map = <String, dynamic>{
       colTitle: title,
       colPriority: priority,
-      colDate: date!.toIso8601String(),
+      colDate: date,
 
     };
     if (id != null) {
@@ -34,7 +34,7 @@ class Contact {
     return Contact.withId(
         id: map[colId],
         title: map[colTitle],
-        date: DateTime.parse(map[colDate]),
+        date: map[colDate],
         priority: map[colPriority],
 
     );

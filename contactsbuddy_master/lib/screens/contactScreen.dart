@@ -49,7 +49,7 @@ class _MyContactsState extends State<MyContacts> {
                           task: todoListSearch,
                         )));
           },
-          child: const Icon(Icons.group_add_sharp),
+          child: const Icon(Icons.person_add_alt_1_rounded),
         ),
         body: FutureBuilder(
           future: _contactList,
@@ -127,10 +127,6 @@ class _MyContactsState extends State<MyContacts> {
   Widget _buildTask(Contact task) {
     String date = "";
 
-    if (task.date != null) {
-      date = _dateFormat.format(task.date!);
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(),
       child: Material(
@@ -202,7 +198,7 @@ class _MyContactsState extends State<MyContacts> {
                 ),
                 leading: task.status == 0
                     ? Icon(
-                        Icons.event,
+                        Icons.person_add_alt_sharp,
                         color: task.priority == "Family"
                             ? Colors.red
                             : task.priority == "Office"
