@@ -9,12 +9,11 @@ class DatabaseHelper {
   final String _dbName = "Contact.db";
   final int _dbVersion = 1;
 
-  DatabaseHelper._privateConstructor(); // Corrected the constructor name
+  DatabaseHelper._privateConstructor();
 
-  static final DatabaseHelper instance =
-      DatabaseHelper._privateConstructor(); // Corrected the instance creation
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  static Database? _db; // Made _db nullable
+  static Database? _db;
 
   Future<Database?> get db async {
     if (_db != null) {
@@ -26,8 +25,7 @@ class DatabaseHelper {
 
   Future<Database> _initDB() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    String dbPath =
-        join(dir.path, _dbName); // Used dir.path instead of dir.toString()
+    String dbPath = join(dir.path, _dbName);
     return await openDatabase(dbPath,
         version: _dbVersion, onCreate: _onCreateDb);
   }
@@ -39,10 +37,20 @@ class DatabaseHelper {
     ${Contact.colId} INTEGER PRIMARY KEY AUTOINCREMENT,
     ${Contact.colTitle} TEXT,
     ${Contact.colDate} TEXT,
-    ${Contact.colPriority} TEXT
+    ${Contact.colPriority} TEXT,
+    colIsDone BOOLEAN
     )
     ''');
+    print("db create called");
   }
+
+  // for checking is done
+  // Future<bool> isDone(Contact contact) async {
+  //   Database? db = await this.db;
+  //   return await db!.rawQuery(
+  //     "SELECT colIsDone FROM ${Contact.tblName} WHERE ${Contact.colId} LIKE ${}"
+  //   );
+  // }
 
   // Inserting contacts
   Future<int> insertContact(Contact contact) async {
@@ -73,7 +81,7 @@ class DatabaseHelper {
 
   // Updating the contacts
   Future<int> updateContact(Contact contact) async {
-    print("up suces");
+   
     Database? db = await this.db;
     return await db!.update(Contact.tblName, contact.toMap(),
         where: '${Contact.colId} = ?', whereArgs: [contact.id]);

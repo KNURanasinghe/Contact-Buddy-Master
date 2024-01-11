@@ -7,7 +7,7 @@ import '../utilities/dbHelper.dart';
 class AddContacts extends StatefulWidget {
   Function refreshList;
   final Contact? contact;
-  String task;
+  final String task;
 
   AddContacts(
       {super.key, required this.task, required this.refreshList, this.contact});
@@ -25,26 +25,19 @@ class _AddTaskState extends State<AddContacts> {
   DateTime? date;
   final TextEditingController _dateController = TextEditingController();
   final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
-  final List<String> _priorities = ["Low", "Medium", "High"];
+  final List<String> _priorities = ["Friends", "Medium", "High"];
   late DatabaseHelper _dbHelper;
+  int id = 0;
 
   @override
   void initState() {
     _dbHelper = DatabaseHelper.instance;
 
-    // if (widget.task is Contact) {
-    //   title = widget.task;
-    //   date = widget.task as DateTime;
-    // print("${widget.task as DateTime}");
-    //   priority = widget.task;
-    // print("${widget.task as }");
-    //   status = widget.task as int;
-    // print("${widget.task as int}");
-    //   status = 0;
-    // }
-    print(widget.task);
-    print("widget.tet");
-    // _dateController.text = _dateFormat.format(date!);
+    title = widget.task.toString();
+    date = date;
+    priority = priority;
+    status = 0;
+
     super.initState();
   }
 
@@ -76,8 +69,7 @@ class _AddTaskState extends State<AddContacts> {
                 height: 20,
               ),
               Text(
-                // ignore: unnecessary_null_comparison
-                widget.task.isEmpty ? "Add Task" : "Update Task",
+                widget.task.isEmpty ? "Add Contact" : "Update Conatct",
                 style: TextStyle(
                   fontSize: 30,
                   color: Theme.of(context).primaryColor,
@@ -96,14 +88,14 @@ class _AddTaskState extends State<AddContacts> {
                         child: TextFormField(
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                              labelText: "Task",
+                              labelText: "Contact",
                               labelStyle: const TextStyle(
                                   fontSize: 20, color: Colors.blueGrey),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10))),
                           textInputAction: TextInputAction.next,
                           validator: (val) => (val.toString().isEmpty)
-                              ? "Please add a task"
+                              ? "Please add a contact"
                               : null,
                           onSaved: (val) => title = val.toString(),
                           initialValue: title,
@@ -179,7 +171,7 @@ class _AddTaskState extends State<AddContacts> {
                             borderRadius: BorderRadius.circular(10)),
                         child: IconButton(
                           icon: Icon(
-                            widget.task != null
+                            widget.task.isEmpty
                                 ? Icons.note_add_rounded
                                 : Icons.update,
                             size: 40,
@@ -195,7 +187,7 @@ class _AddTaskState extends State<AddContacts> {
               const SizedBox(
                 height: 20,
               ),
-              widget.task != null
+              widget.task.isEmpty
                   ? Container(
                       height: MediaQuery.of(context).size.height * .07,
                       width: double.infinity,
@@ -242,19 +234,17 @@ class _AddTaskState extends State<AddContacts> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       Contact task;
-      print("id");
+
       task = Contact(
         title: title,
         date: date,
         priority: priority,
-        status: status,
-        id: 5,
+        id: 1,
       );
-      print("${task.id}");
+
       _dbHelper.updateContact(task);
 
       widget.refreshList();
-      print('status is $status');
 
       Navigator.pop(context);
     }
@@ -263,7 +253,6 @@ class _AddTaskState extends State<AddContacts> {
   _delete() {
     // Assuming widget.task is of type Contact
     if (widget.task is Contact) {
-      print("delete clicked");
       _dbHelper.deleteContact(widget.task as int);
       widget.refreshList();
       Navigator.pop(context);

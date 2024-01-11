@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
             )
             .copyWith(error: Colors.redAccent),
       ),
-      home: MyContacts(),
+      home: const MyContacts(),
     );
   }
 }

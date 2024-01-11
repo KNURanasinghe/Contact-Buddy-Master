@@ -23,6 +23,7 @@ class _MyContactsState extends State<MyContacts> {
   void _refreshTaskList() async {
     setState(() {
       _contactList = _dbHelper.fetchContacts(contactListSearch);
+      print("$_contactList");
     });
   }
 
@@ -45,10 +46,10 @@ class _MyContactsState extends State<MyContacts> {
                 MaterialPageRoute(
                     builder: (_) => AddContacts(
                           refreshList: _refreshTaskList,
-                          task:todoListSearch
+                          task: todoListSearch,
                         )));
           },
-          child: const Icon(Icons.add),
+          child: const Icon(Icons.group_add_sharp),
         ),
         body: FutureBuilder(
           future: _contactList,
@@ -76,7 +77,7 @@ class _MyContactsState extends State<MyContacts> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "My Tasks",
+                          "Contact Buddy",
                           style: TextStyle(
                               fontSize: 30,
                               color: Theme.of(context).primaryColor,
@@ -123,11 +124,11 @@ class _MyContactsState extends State<MyContacts> {
         );
   }
 
-  Widget _buildTask( task) {
+  Widget _buildTask(Contact task) {
     String date = "";
 
-    if (task?.date != null) {
-      date = _dateFormat.format(task.date);
+    if (task.date != null) {
+      date = _dateFormat.format(task.date!);
     }
 
     return Padding(
@@ -142,7 +143,7 @@ class _MyContactsState extends State<MyContacts> {
               padding:
                   const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               decoration: BoxDecoration(
-                gradient: task?.status == 0
+                gradient: task.status == 0
                     ? const LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -169,48 +170,48 @@ class _MyContactsState extends State<MyContacts> {
                 title: Padding(
                   padding: const EdgeInsets.only(bottom: 5.0),
                   child: Text(
-                    task?.title != null ? task.title : "Task",
+                    task.title != null ? "${task.title}" : "Contact",
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                subtitle: Text("$date . ${task?.priority}",
+                subtitle: Text("$date . ${task.priority}",
                     style: const TextStyle(
                       fontSize: 15,
                     )),
                 trailing: Checkbox(
                   onChanged: (val) {
-                    task.status = val! ? 1 : 0;
+                    task.status == val! ? 1 : 0;
 
                     _dbHelper.updateContact(task);
                     _refreshTaskList();
                   },
-                  value: task?.status == 1 ? true : false,
+                  value: task.status == 1 ? true : false,
                   activeColor: const Color(0XFF52001B),
                 ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => AddContacts(
-                      task: task,
+                      task: task.title.toString(),
                       refreshList: _refreshTaskList,
                     ),
                   ),
                 ),
-                leading: task?.status == 0
+                leading: task.status == 0
                     ? Icon(
                         Icons.event,
-                        color: task?.priority == "High"
+                        color: task.priority == "Family"
                             ? Colors.red
-                            : task?.priority == "Medium"
+                            : task.priority == "Office"
                                 ? const Color(0XFF0776CA)
                                 : const Color(0XFF0AA51A),
                       )
                     : Icon(
                         Icons.check,
-                        color: task?.priority == "High"
+                        color: task.priority == "Family"
                             ? Colors.red
                             : const Color(0XFF0E1D35),
                       ),
