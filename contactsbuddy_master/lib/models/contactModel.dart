@@ -4,6 +4,7 @@ class Contact {
   int? date;
   String? priority;
   int? status = 0;
+  // bool? isDone = false;
 
   Contact({
     this.title,

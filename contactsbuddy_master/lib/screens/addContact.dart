@@ -10,20 +10,25 @@ class AddContacts extends StatefulWidget {
   Function refreshList;
   final Contact? contact;
   final String task;
+  final int? id;
 
   AddContacts(
-      {super.key, required this.task, required this.refreshList, this.contact});
+      {super.key,
+      required this.task,
+      required this.refreshList,
+      this.contact,
+      required this.id});
 
   @override
   _AddTaskState createState() => _AddTaskState();
 }
 
 class _AddTaskState extends State<AddContacts> {
-  _AddTaskState({this.title, this.date, this.status, this.priority});
+  _AddTaskState({this.title, this.date, this.priority});
 
   final _formKey = GlobalKey<FormState>();
   String? title, priority;
-  late int? status;
+
   int? date;
   TextEditingController dateController = TextEditingController();
   final List<String> _priorities = ["Friends", "Office", "Family"];
@@ -36,12 +41,10 @@ class _AddTaskState extends State<AddContacts> {
     title = widget.task.toString();
     date = date;
     priority = priority;
-    status = 0;
 
     super.initState();
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,7 +189,7 @@ class _AddTaskState extends State<AddContacts> {
               const SizedBox(
                 height: 20,
               ),
-              widget.task.isEmpty
+              widget.task.isNotEmpty
                   ? Container(
                       height: MediaQuery.of(context).size.height * .07,
                       width: double.infinity,
@@ -233,11 +236,11 @@ class _AddTaskState extends State<AddContacts> {
         title: title,
         date: date,
         priority: priority,
-        id: 1,
+        id: widget.id,
       );
       widget.task.isEmpty
           ? _dbHelper.insertContact(task)
-          : _dbHelper.updateContact(task);
+          : _dbHelper.updateContact(task, title!, widget.id!, priority!, date!);
 
       widget.refreshList();
 
@@ -246,9 +249,9 @@ class _AddTaskState extends State<AddContacts> {
   }
 
   _delete() {
-    // Assuming widget.task is of type Contact
-    if (widget.task is Contact) {
-      _dbHelper.deleteContact(widget.task as int);
+    if (widget.task.isNotEmpty) {
+      print("ID: ${widget.id}");
+      _dbHelper.deleteContact(widget.id as int);
       widget.refreshList();
       Navigator.pop(context);
     }

@@ -85,11 +85,14 @@ class DatabaseHelper {
   }
 
   // Updating the contacts
-  Future<int> updateContact(Contact contact) async {
+  Future<List<Map<String, Object?>>> updateContact(
+      Contact contact, String title, int id, String priority, int date) async {
     print("data updated");
     Database? db = await this.db;
-    return await db!.update(Contact.tblName, contact.toMap(),
-        where: '${Contact.colId} = ?', whereArgs: [contact.id]);
+    String sql =
+        "UPDATE ${Contact.tblName} SET ${Contact.colTitle}='$title', ${Contact.colDate}='$date', ${Contact.colPriority}='$priority' WHERE id=$id";
+
+    return await db!.rawQuery(sql);
   }
 
   // Deleting the contacts
