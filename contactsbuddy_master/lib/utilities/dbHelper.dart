@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:contactsbuddy_master/models/contactModel.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,7 +26,8 @@ class DatabaseHelper {
 
   Future<Database> _initDB() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    String dbPath = join(dir.path, _dbName); // Used dir.path instead of dir.toString()
+    String dbPath =
+        join(dir.path, _dbName); // Used dir.path instead of dir.toString()
     return await openDatabase(dbPath,
         version: _dbVersion, onCreate: _onCreateDb);
   }
@@ -54,24 +56,24 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> contacts = await db!.rawQuery(
         "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '$contactName%'");
 
-    final List<Contact> contactsList = contacts.length == 0
+    final List<Contact> contactsList = contacts.isEmpty
         ? []
         : contacts.map((e) => Contact.fromMap(e)).toList();
-    contactsList.sort((contactA, contactB) =>
-        contactA.date!.compareTo(contactB.date!));
+    contactsList
+        .sort((contactA, contactB) => contactA.date!.compareTo(contactB.date!));
     return contactsList;
   }
 
   // Querying all contacts
   Future<List<Map<String, dynamic>>> queryAll() async {
     Database? db = await this.db;
-    final List<Map<String, dynamic>> result =
-        await db!.query(Contact.tblName);
+    final List<Map<String, dynamic>> result = await db!.query(Contact.tblName);
     return result;
   }
 
   // Updating the contacts
   Future<int> updateContact(Contact contact) async {
+    print("up suces");
     Database? db = await this.db;
     return await db!.update(Contact.tblName, contact.toMap(),
         where: '${Contact.colId} = ?', whereArgs: [contact.id]);

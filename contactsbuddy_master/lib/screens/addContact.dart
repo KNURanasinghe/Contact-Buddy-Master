@@ -35,12 +35,15 @@ class _AddTaskState extends State<AddContacts> {
     // if (widget.task is Contact) {
     //   title = widget.task;
     //   date = widget.task as DateTime;
+    // print("${widget.task as DateTime}");
     //   priority = widget.task;
+    // print("${widget.task as }");
     //   status = widget.task as int;
+    // print("${widget.task as int}");
     //   status = 0;
     // }
-    print("${widget.task}");
-    print("widget.tet") ;
+    print(widget.task);
+    print("widget.tet");
     // _dateController.text = _dateFormat.format(date!);
     super.initState();
   }
