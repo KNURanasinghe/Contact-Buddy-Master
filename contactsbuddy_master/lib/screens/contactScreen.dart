@@ -21,7 +21,6 @@ class _MyContactsState extends State<MyContacts> {
   void _refreshTaskList() async {
     setState(() {
       _contactList = _dbHelper.fetchContacts(contactListSearch);
-      print("$_contactList");
     });
   }
 
@@ -29,12 +28,12 @@ class _MyContactsState extends State<MyContacts> {
   void initState() {
     _dbHelper = DatabaseHelper.instance;
     _refreshTaskList();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _refreshTaskList();
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
@@ -47,7 +46,7 @@ class _MyContactsState extends State<MyContacts> {
                         task: todoListSearch,
                         id: null)));
           },
-          child: const Icon(Icons.person_add_alt_1_rounded),
+          child: const Icon(Icons.person_add_alt_1),
         ),
         body: FutureBuilder(
           future: _contactList,
@@ -59,7 +58,7 @@ class _MyContactsState extends State<MyContacts> {
             }
 
             final int completedTask = snapshot.data!
-                .where((Contact task) => task.status == 1)
+                .where((Contact task) => task.isDone!)
                 .toList()
                 .length;
 
@@ -118,8 +117,7 @@ class _MyContactsState extends State<MyContacts> {
                   return _buildTask(snapshot.data![index - 1]);
                 });
           },
-        ) // This trailing comma makes auto-formatting nicer for build methods.
-        );
+        ));
   }
 
   Widget _buildTask(Contact task) {
@@ -138,20 +136,20 @@ class _MyContactsState extends State<MyContacts> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 20.0, horizontal: 10.0),
                 decoration: BoxDecoration(
-                  gradient: task.status == 0
+                  gradient: !task.isDone!
                       ? const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                              Color(0XFF70A9FF),
-                              Color(0XFF90BCFF),
+                              Color.fromARGB(226, 106, 183, 250),
+                              Color.fromARGB(255, 80, 149, 252),
                             ])
                       : const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                              Color(0XFFFFC026),
-                              Color(0XFFFFA21D),
+                              Color.fromARGB(217, 142, 241, 67),
+                              Color.fromARGB(255, 29, 255, 195),
                             ]),
                   borderRadius: BorderRadius.circular(20.0),
                   boxShadow: [
@@ -184,9 +182,6 @@ class _MyContactsState extends State<MyContacts> {
                       });
 
                       _dbHelper.markDone(task, task.id!);
-                      _refreshTaskList();
-
-                      print("task: ${task.id} marked!");
                     },
                     activeColor: const Color(0XFF52001B),
                   ),
@@ -201,11 +196,11 @@ class _MyContactsState extends State<MyContacts> {
                   ),
                   leading: !task.isDone!
                       ? Icon(
-                          Icons.person_add_alt_sharp,
+                          Icons.person,
                           color: task.priority == "Family"
                               ? Colors.red
                               : task.priority == "Office"
-                                  ? const Color(0XFF0776CA)
+                                  ? const Color.fromARGB(214, 1, 47, 83)
                                   : const Color(0XFF0AA51A),
                         )
                       : Icon(

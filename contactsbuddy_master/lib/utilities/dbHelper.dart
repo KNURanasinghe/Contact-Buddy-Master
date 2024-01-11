@@ -52,7 +52,6 @@ class DatabaseHelper {
     ${Contact.colIsDone} BOOLEAN,
     )
     ''');
-    print("db create called");
   }
 
   // for checking is done
@@ -65,14 +64,12 @@ class DatabaseHelper {
 
   // Inserting contacts
   Future<int> insertContact(Contact contact) async {
-    print("data inserted");
     Database? db = await this.db;
     return await db!.insert(Contact.tblName, contact.toMap());
   }
 
   // Fetching the contacts
   Future<List<Contact>> fetchContacts(String contactName) async {
-    print("data searched");
     Database? db = await this.db;
     final List<Map<String, dynamic>> contacts = await db!.rawQuery(
         "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '$contactName%'");
@@ -95,7 +92,6 @@ class DatabaseHelper {
   // Updating the contacts
   Future<List<Map<String, Object?>>> updateContact(
       Contact contact, String title, int id, String priority, int date) async {
-    print("data updated");
     Database? db = await this.db;
     String sql =
         "UPDATE ${Contact.tblName} SET ${Contact.colTitle}='$title', ${Contact.colDate}='$date', ${Contact.colPriority}='$priority' WHERE id=$id";
@@ -105,8 +101,6 @@ class DatabaseHelper {
 
   // for checking that the task is done
   Future<void> markDone(Contact contact, int id) async {
-    print("id ${contact.id} mark called...!");
-
     Database? db = await this.db;
     String sql =
         "UPDATE ${Contact.tblName} SET ${Contact.colIsDone} = 1 - ${Contact.colIsDone} WHERE ${Contact.colId} = $id";
@@ -115,7 +109,6 @@ class DatabaseHelper {
 
   // Deleting the contacts
   Future<int> deleteContact(int id) async {
-    print("data deleted");
     Database? db = await this.db;
     return await db!.delete(Contact.tblName,
         where: '${Contact.colId} = ?', whereArgs: [id]);

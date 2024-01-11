@@ -250,7 +250,6 @@ class _AddTaskState extends State<AddContacts> {
 
   _delete() {
     if (widget.task.isNotEmpty) {
-      print("ID: ${widget.id}");
       _dbHelper.deleteContact(widget.id as int);
       widget.refreshList();
       Navigator.pop(context);
