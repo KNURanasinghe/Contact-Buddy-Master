@@ -33,6 +33,14 @@ class DatabaseHelper {
     );
   }
 
+  // temp
+  // void alter() async {
+  //   Database? db = await this.db;
+  //   String sql =
+  //       "ALTER TABLE ${Contact.tblName} ADD ${Contact.colIsDone} BOOLEAN";
+  //   db?.execute(sql);
+  // }
+
   // Creating table
   Future<void> _onCreateDb(Database db, int version) async {
     await db.execute('''
@@ -41,7 +49,7 @@ class DatabaseHelper {
     ${Contact.colTitle} TEXT,
     ${Contact.colDate} TEXT,
     ${Contact.colPriority} TEXT,
-    colIsDone BOOLEAN
+    ${Contact.colIsDone} BOOLEAN,
     )
     ''');
     print("db create called");
@@ -93,6 +101,16 @@ class DatabaseHelper {
         "UPDATE ${Contact.tblName} SET ${Contact.colTitle}='$title', ${Contact.colDate}='$date', ${Contact.colPriority}='$priority' WHERE id=$id";
 
     return await db!.rawQuery(sql);
+  }
+
+  // for checking that the task is done
+  Future<void> markDone(Contact contact, int id) async {
+    print("id ${contact.id} mark called...!");
+
+    Database? db = await this.db;
+    String sql =
+        "UPDATE ${Contact.tblName} SET ${Contact.colIsDone} = 1 - ${Contact.colIsDone} WHERE ${Contact.colId} = $id";
+    await db!.rawUpdate(sql);
   }
 
   // Deleting the contacts

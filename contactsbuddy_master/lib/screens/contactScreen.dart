@@ -43,10 +43,9 @@ class _MyContactsState extends State<MyContacts> {
                 context,
                 MaterialPageRoute(
                     builder: (_) => AddContacts(
-                          refreshList: _refreshTaskList,
-                          task: todoListSearch,
-                          id: null
-                        )));
+                        refreshList: _refreshTaskList,
+                        task: todoListSearch,
+                        id: null)));
           },
           child: const Icon(Icons.person_add_alt_1_rounded),
         ),
@@ -178,29 +177,29 @@ class _MyContactsState extends State<MyContacts> {
                         fontSize: 15,
                       )),
                   trailing: Checkbox(
+                    value: task.isDone!,
                     onChanged: (val) {
                       setState(() {
-                        task.status = val! ? 1 : 0;
+                        task.isDone = val;
                       });
 
-                      // _dbHelper.updateContact(task); // TODO
+                      _dbHelper.markDone(task, task.id!);
                       _refreshTaskList();
+
+                      print("task: ${task.id} marked!");
                     },
-                    tristate: true,
-                    value: task.status == 1 ? true : false,
                     activeColor: const Color(0XFF52001B),
                   ),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => AddContacts(
-                        task: task.title.toString(),
-                        refreshList: _refreshTaskList,
-                        id: task.id
-                      ),
+                          task: task.title.toString(),
+                          refreshList: _refreshTaskList,
+                          id: task.id),
                     ),
                   ),
-                  leading: task.status == 0
+                  leading: !task.isDone!
                       ? Icon(
                           Icons.person_add_alt_sharp,
                           color: task.priority == "Family"
