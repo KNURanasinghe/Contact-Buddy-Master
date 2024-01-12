@@ -1,7 +1,7 @@
 class Contact {
   int? id;
   String? title;
-  int? date;
+  String? date;
   String? priority;
   int? status = 0;
 
@@ -41,7 +41,7 @@ class Contact {
     return Contact.withId(
       id: map[colId],
       title: map[colTitle],
-      date: map[colDate] != null ? int.tryParse(map[colDate]) : null,
+      date: map[colDate].toString(),
       priority: map[colPriority],
     );
   }

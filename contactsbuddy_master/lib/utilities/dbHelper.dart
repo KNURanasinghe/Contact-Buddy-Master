@@ -64,6 +64,7 @@ class DatabaseHelper {
   // Inserting contacts
   Future<int> insertContact(Contact contact) async {
     Database? db = await this.db;
+    print("Date: ${contact.date}");
     return await db!.insert(Contact.tblName, contact.toMap());
   }
 
@@ -91,7 +92,6 @@ class DatabaseHelper {
         ? []
         : contacts.map((e) => Contact.fromMap(e)).toList();
 
-
     print("Contact List that returns: $contactsList");
     // contactsList
     //     .sort((contactA, contactB) => contactA.date!.compareTo(contactB.date!));
@@ -108,7 +108,7 @@ class DatabaseHelper {
 
   // Updating the contacts
   Future<List<Map<String, Object?>>> updateContact(
-      Contact contact, String title, int id, String priority, int date) async {
+      Contact contact, String title, int id, String priority, String date) async {
     Database? db = await this.db;
     String sql =
         "UPDATE ${Contact.tblName} SET ${Contact.colTitle}='$title', ${Contact.colDate}='$date', ${Contact.colPriority}='$priority' WHERE id=$id";

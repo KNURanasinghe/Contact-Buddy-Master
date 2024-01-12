@@ -29,7 +29,7 @@ class _AddTaskState extends State<AddContacts> {
   final _formKey = GlobalKey<FormState>();
   String? title, priority;
 
-  int? date;
+  String? date;
   TextEditingController dateController = TextEditingController();
   final List<String> _priorities = ["Friends", "Office", "Family"];
   late DatabaseHelper _dbHelper;
@@ -119,7 +119,7 @@ class _AddTaskState extends State<AddContacts> {
                               : null,
                           onSaved: (val) {
                             // Convert date to milliseconds since epoch and store as int
-                            date = _convertDateToMilliseconds(val.toString());
+                            date = val;
                           },
                         ),
                       ),
@@ -234,10 +234,11 @@ class _AddTaskState extends State<AddContacts> {
 
       task = Contact(
         title: title,
-        date: date,
+        date: date.toString(),
         priority: priority,
         id: widget.id,
       );
+      print("date to add: ${task.date}");
       widget.task.isEmpty
           ? _dbHelper.insertContact(task)
           : _dbHelper.updateContact(task, title!, widget.id!, priority!, date!);
