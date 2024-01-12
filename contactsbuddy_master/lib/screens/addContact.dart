@@ -107,7 +107,7 @@ class _AddTaskState extends State<AddContacts> {
                         child: TextFormField(
                           style: const TextStyle(color: Colors.blueGrey),
                           decoration: InputDecoration(
-                              labelText: "Date (DD/MM/YYYY)",
+                              labelText: "Number",
                               labelStyle: const TextStyle(fontSize: 20),
                               border: OutlineInputBorder(
                                   borderSide: const BorderSide(
@@ -115,7 +115,7 @@ class _AddTaskState extends State<AddContacts> {
                                   borderRadius: BorderRadius.circular(10))),
                           textInputAction: TextInputAction.next,
                           validator: (val) => (val.toString().isEmpty)
-                              ? "Please add a date in the format DD/MM/YYYY"
+                              ? "Please add a number"
                               : null,
                           onSaved: (val) {
                             // Convert date to milliseconds since epoch and store as int

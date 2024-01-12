@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/contactModel.dart';
 import '../utilities/dbHelper.dart';
@@ -21,6 +22,12 @@ class _MyContactsState extends State<MyContacts> {
   void _refreshTaskList() async {
     setState(() {
       _contactList = _dbHelper.fetchContacts(contactListSearch);
+    });
+  }
+
+  void _refreshSearchList() async {
+    setState(() {
+      _contactList = _dbHelper.fetchContacts(todoListSearch);
     });
   }
 
@@ -52,16 +59,31 @@ class _MyContactsState extends State<MyContacts> {
           future: _contactList,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
+              print("${snapshot.data} sapshot----.. $_contactList ");
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-
-            final int completedTask = snapshot.data!
-                .where((Contact task) => task.isDone!)
-                .toList()
-                .length;
-
+            //   FutureBuilder(
+            // future: _contactList,
+            // builder: (context, snapshot) {
+            //   if (snapshot.connectionState == ConnectionState.waiting) {
+            //     print("Waiting for data...");
+            //     return const Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   } else if (snapshot.hasError) {
+            //     print("Error11: ${snapshot.error}");
+            //     return Center(
+            //       child: Text('Error: ${snapshot.error}'),
+            //     );
+            //   } else if (!snapshot.hasData || snapshot.data == null) {
+            //     print("No data or empty data");
+            //     return const Center(
+            //       child: Text('No contacts found.'),
+            //     );
+            //   }
+            List<Contact> cList;
             return ListView.builder(
                 padding: const EdgeInsets.symmetric(
                   vertical: 60,
@@ -81,7 +103,7 @@ class _MyContactsState extends State<MyContacts> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Completed $completedTask of ${snapshot.data!.length}",
+                          "Search your Contact from here",
                           style: TextStyle(
                               fontSize: 15,
                               color: Theme.of(context).primaryColor,
@@ -94,14 +116,16 @@ class _MyContactsState extends State<MyContacts> {
                           style: const TextStyle(color: Colors.white),
                           textCapitalization: TextCapitalization.sentences,
                           onChanged: (value) {
-                            setState(() {
+                            setState(() async {
                               todoListSearch = value;
-                              print(todoListSearch);
+                              cList = await _dbHelper.fetchContacts(value);
+                              print(cList.length);
+                              _refreshSearchList();
                             });
                           },
                           decoration: const InputDecoration(
                               labelText:
-                                  'Search', //TODO create search sql function search using title;
+                                  'Search', 
                               labelStyle: TextStyle(color: Colors.white),
                               prefixIcon:
                                   Icon(Icons.search, color: Color(0XFF06BAD9)),
@@ -123,8 +147,6 @@ class _MyContactsState extends State<MyContacts> {
   }
 
   Widget _buildTask(Contact task) {
-    String date = "";
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(),
@@ -138,21 +160,13 @@ class _MyContactsState extends State<MyContacts> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 20.0, horizontal: 10.0),
                 decoration: BoxDecoration(
-                  gradient: !task.isDone!
-                      ? const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                              Color.fromARGB(226, 106, 183, 250),
-                              Color.fromARGB(255, 80, 149, 252),
-                            ])
-                      : const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                              Color.fromARGB(217, 142, 241, 67),
-                              Color.fromARGB(255, 29, 255, 195),
-                            ]),
+                  gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color.fromARGB(226, 106, 183, 250),
+                        Color.fromARGB(255, 80, 149, 252),
+                      ]),
                   borderRadius: BorderRadius.circular(20.0),
                   boxShadow: [
                     BoxShadow(
@@ -172,20 +186,38 @@ class _MyContactsState extends State<MyContacts> {
                       ),
                     ),
                   ),
-                  subtitle: Text("$date . ${task.priority}",
+                  subtitle: Text("${task.date} . ${task.priority}",
                       style: const TextStyle(
                         fontSize: 15,
                       )),
-                  trailing: Checkbox(
-                    value: task.isDone!,
-                    onChanged: (val) {
-                      setState(() {
-                        task.isDone = val;
-                      });
-
-                      _dbHelper.markDone(task, task.id!);
-                    },
-                    activeColor: const Color(0XFF52001B),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconButton(
+                          icon: const Icon(Icons.message),
+                          onPressed: () async {
+                            final Uri uri = Uri(
+                              scheme: 'tel',
+                              path: '${task.date}',
+                            );
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(uri);
+                            }
+                          }),
+                      IconButton(
+                        icon: const Icon(Icons.call),
+                        onPressed: () async {
+                          final Uri uri = Uri(
+                            scheme: 'tel',
+                            path: '${task.date}',
+                          );
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri);
+                          }
+                          print("${task.date}");
+                        },
+                      ),
+                    ],
                   ),
                   onTap: () => Navigator.push(
                     context,
@@ -196,23 +228,14 @@ class _MyContactsState extends State<MyContacts> {
                           id: task.id),
                     ),
                   ),
-                  leading: !task.isDone!
-                      ? Icon(
-                          Icons.person,
-                          color: task.priority == "Family"
-                              ? const Color.fromARGB(255, 245, 45, 31)
-                              : task.priority == "Office"
-                                  ? const Color.fromARGB(255, 4, 25, 119)
-                                  : const Color.fromARGB(255, 216, 227, 18),
-                        )
-                      : Icon(
-                          Icons.check,
-                          color: task.priority == "Family"
-                              ? const Color.fromARGB(255, 209, 31, 19)
-                              : task.priority == "Office"
-                                  ? const Color.fromARGB(255, 4, 25, 119)
-                                  : const Color.fromARGB(255, 252, 227, 2),
-                        ),
+                  leading: Icon(
+                    Icons.person,
+                    color: task.priority == "Family"
+                        ? const Color.fromARGB(255, 245, 45, 31)
+                        : task.priority == "Office"
+                            ? const Color.fromARGB(255, 4, 25, 119)
+                            : const Color.fromARGB(255, 216, 227, 18),
+                  ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 5),
                 ),
               ),

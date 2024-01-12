@@ -49,7 +49,6 @@ class DatabaseHelper {
     ${Contact.colTitle} TEXT,
     ${Contact.colDate} TEXT,
     ${Contact.colPriority} TEXT,
-    ${Contact.colIsDone} BOOLEAN,
     )
     ''');
   }
@@ -69,16 +68,34 @@ class DatabaseHelper {
   }
 
   // Fetching the contacts
-  Future<List<Contact>> fetchContacts(String contactName ) async {
+  // Future<List<Contact>> fetchContacts(String contactName) async {
+  //   Database? db = await this.db;
+  //   final List<Map<String, dynamic>> contacts = await db!.rawQuery(
+  //       "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '$contactName%'");
+
+  //   final List<Contact> contactsList = contacts.isEmpty
+  //       ? []
+  //       : contacts.map((e) => Contact.fromMap(e)).toList();
+  //   contactsList
+  //       .sort((contactA, contactB) => contactA.date!.compareTo(contactB.date!));
+  //   return contactsList;
+  // }
+  Future<List<Contact>> fetchContacts(String contactName) async {
     Database? db = await this.db;
     final List<Map<String, dynamic>> contacts = await db!.rawQuery(
-        "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '$contactName%'");
+        "SELECT * FROM ${Contact.tblName} WHERE ${Contact.colTitle} LIKE '%$contactName%'");
+
+    print("Contact List from Database: $contacts");
 
     final List<Contact> contactsList = contacts.isEmpty
         ? []
         : contacts.map((e) => Contact.fromMap(e)).toList();
-    contactsList
-        .sort((contactA, contactB) => contactA.date!.compareTo(contactB.date!));
+
+
+    print("Contact List that returns: $contactsList");
+    // contactsList
+    //     .sort((contactA, contactB) => contactA.date!.compareTo(contactB.date!));
+
     return contactsList;
   }
 
@@ -99,13 +116,13 @@ class DatabaseHelper {
     return await db!.rawQuery(sql);
   }
 
-  // for checking that the task is done
-  Future<void> markDone(Contact contact, int id) async {
-    Database? db = await this.db;
-    String sql =
-        "UPDATE ${Contact.tblName} SET ${Contact.colIsDone} = 1 - ${Contact.colIsDone} WHERE ${Contact.colId} = $id";
-    await db!.rawUpdate(sql);
-  }
+  // // for checking that the task is done
+  // Future<void> markDone(Contact contact, int id) async {
+  //   Database? db = await this.db;
+  //   String sql =
+  //       "UPDATE ${Contact.tblName} SET ${Contact.colIsDone} = 1 - ${Contact.colIsDone} WHERE ${Contact.colId} = $id";
+  //   await db!.rawUpdate(sql);
+  // }
 
   // Deleting the contacts
   Future<int> deleteContact(int id) async {
