@@ -124,8 +124,7 @@ class _MyContactsState extends State<MyContacts> {
                             });
                           },
                           decoration: const InputDecoration(
-                              labelText:
-                                  'Search', 
+                              labelText: 'Search',
                               labelStyle: TextStyle(color: Colors.white),
                               prefixIcon:
                                   Icon(Icons.search, color: Color(0XFF06BAD9)),
@@ -197,9 +196,10 @@ class _MyContactsState extends State<MyContacts> {
                           icon: const Icon(Icons.message),
                           onPressed: () async {
                             final Uri uri = Uri(
-                              scheme: 'tel',
+                              scheme: 'sms',
                               path: '${task.date}',
                             );
+                            print("message launch: $uri");
                             if (await canLaunchUrl(uri)) {
                               await launchUrl(uri);
                             }
@@ -207,14 +207,18 @@ class _MyContactsState extends State<MyContacts> {
                       IconButton(
                         icon: const Icon(Icons.call),
                         onPressed: () async {
-                          final Uri uri = Uri(
-                            scheme: 'tel',
-                            path: '${task.date}',
-                          );
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri);
+                          final Uri uri = Uri.parse('tel:+${task.date}');
+
+                          print("calling $uri");
+                          try {
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(uri);
+                            } else {
+                              print('Could not launch dialer');
+                            }
+                          } catch (e) {
+                            print("exception occured: ${e.toString()}");
                           }
-                          print("${task.date}");
                         },
                       ),
                     ],
