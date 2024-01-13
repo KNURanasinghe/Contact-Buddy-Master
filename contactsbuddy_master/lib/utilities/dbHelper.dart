@@ -42,13 +42,23 @@ class DatabaseHelper {
   // }
 
   // Creating table
+  // Future<void> _onCreateDb(Database db, int version) async {
+  //   await db.execute('''
+  //   CREATE TABLE ${Contact.tblName}(
+  //   ${Contact.colId} INTEGER PRIMARY KEY AUTOINCREMENT,
+  //   ${Contact.colTitle} TEXT,
+  //   ${Contact.colDate} TEXT,
+  //   ${Contact.colPriority} TEXT,
+  //   )
+  //   ''');
+  // }
   Future<void> _onCreateDb(Database db, int version) async {
     await db.execute('''
     CREATE TABLE ${Contact.tblName}(
     ${Contact.colId} INTEGER PRIMARY KEY AUTOINCREMENT,
     ${Contact.colTitle} TEXT,
     ${Contact.colDate} TEXT,
-    ${Contact.colPriority} TEXT,
+    ${Contact.colPriority} TEXT
     )
     ''');
   }
@@ -107,8 +117,8 @@ class DatabaseHelper {
   }
 
   // Updating the contacts
-  Future<List<Map<String, Object?>>> updateContact(
-      Contact contact, String title, int id, String priority, String date) async {
+  Future<List<Map<String, Object?>>> updateContact(Contact contact,
+      String title, int id, String priority, String date) async {
     Database? db = await this.db;
     String sql =
         "UPDATE ${Contact.tblName} SET ${Contact.colTitle}='$title', ${Contact.colDate}='$date', ${Contact.colPriority}='$priority' WHERE id=$id";

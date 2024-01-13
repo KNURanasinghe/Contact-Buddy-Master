@@ -207,7 +207,7 @@ class _MyContactsState extends State<MyContacts> {
                       IconButton(
                         icon: const Icon(Icons.call),
                         onPressed: () async {
-                          final Uri uri = Uri.parse('tel:+${task.date}');
+                          final Uri uri = Uri.parse('tel:${task.date}');
 
                           print("calling $uri");
                           try {

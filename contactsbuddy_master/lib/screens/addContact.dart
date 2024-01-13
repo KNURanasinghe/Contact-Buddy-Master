@@ -107,8 +107,9 @@ class _AddTaskState extends State<AddContacts> {
                         child: TextFormField(
                           style: const TextStyle(color: Colors.blueGrey),
                           decoration: InputDecoration(
-                              labelText: "Number",
-                              labelStyle: const TextStyle(fontSize: 20),
+                              labelText: "Number ",
+                              labelStyle: const TextStyle(
+                                  fontSize: 20, color: Colors.blueGrey),
                               border: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                       color: Colors.pinkAccent),
@@ -118,7 +119,6 @@ class _AddTaskState extends State<AddContacts> {
                               ? "Please add a number"
                               : null,
                           onSaved: (val) {
-                            // Convert date to milliseconds since epoch and store as int
                             date = val;
                           },
                         ),
@@ -149,7 +149,8 @@ class _AddTaskState extends State<AddContacts> {
                           onSaved: (val) => priority = val.toString(),
                           decoration: InputDecoration(
                               labelText: "Priority",
-                              labelStyle: const TextStyle(fontSize: 20),
+                              labelStyle: const TextStyle(
+                                  fontSize: 20, color: Colors.blueGrey),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10))),
                           onChanged: (val) {
