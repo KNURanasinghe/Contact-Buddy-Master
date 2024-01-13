@@ -145,10 +145,10 @@ class _AddTaskState extends State<AddContacts> {
                           icon:
                               const Icon(Icons.arrow_drop_down_circle_outlined),
                           validator: (val) =>
-                              (val == null) ? "Please add a priority" : null,
+                              (val == null) ? "Please add a Label" : null,
                           onSaved: (val) => priority = val.toString(),
                           decoration: InputDecoration(
-                              labelText: "Priority",
+                              labelText: "Label",
                               labelStyle: const TextStyle(
                                   fontSize: 20, color: Colors.blueGrey),
                               border: OutlineInputBorder(
@@ -175,7 +175,7 @@ class _AddTaskState extends State<AddContacts> {
                         child: IconButton(
                           icon: Icon(
                             widget.task.isEmpty
-                                ? Icons.note_add_rounded
+                                ? Icons.person_add_alt_1
                                 : Icons.update,
                             size: 40,
                             color: const Color(0XFF06BAD9),
